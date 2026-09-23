@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -64,6 +64,27 @@ export default function TouristProfilePage() {
   const { language, setLanguage, t, supportedLanguages } = useLanguage();
   const [toastMessage, setToastMessage] = useState(null);
   const [isLangModalOpen, setIsLangModalOpen] = useState(false);
+
+  // State thông tin cá nhân (đồng bộ từ localStorage khi chỉnh sửa)
+  const [currentProfile, setCurrentProfile] = useState(profileInfo);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("vietculture_user_profile");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setCurrentProfile((prev) => ({
+          ...prev,
+          name: parsed.fullName || prev.name,
+          email: parsed.email || prev.email,
+          phone: parsed.phone || prev.phone,
+          avatar: parsed.avatar || prev.avatar,
+        }));
+      }
+    } catch {
+      // Bỏ qua lỗi
+    }
+  }, []);
 
   // State Quản lý Thông Báo
   const [notifications, setNotifications] = useState(initialMockNotifications);
@@ -368,7 +389,7 @@ export default function TouristProfilePage() {
         <main className="flex-1 p-4 space-y-5">
           {/* ── 1. TÍCH HỢP PROFILE OVERVIEW ── */}
           <ProfileOverview
-            profile={profileInfo}
+            profile={currentProfile}
             onViewRank={() =>
               showToast(
                 `Hạng hiện tại: ${profileInfo.rankTier}. Cần thêm ${profileInfo.pointsToNextTier} điểm để đạt Hạng Vàng!`
@@ -557,10 +578,9 @@ export default function TouristProfilePage() {
             </div>
 
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden divide-y divide-slate-100">
-              {/* 1. Thông tin cá nhân */}
-              <button
-                type="button"
-                onClick={() => showToast(t("personalInfo"))}
+              {/* 1. Thông tin cá nhân -> Chuyển sang /profile/edit */}
+              <Link
+                href="/profile/edit"
                 className="w-full px-4 py-3.5 flex items-center justify-between text-left hover:bg-slate-50 active:bg-slate-100 transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
@@ -573,7 +593,7 @@ export default function TouristProfilePage() {
                   </div>
                 </div>
                 <ChevronRight size={16} className="text-slate-300 group-hover:text-slate-500 transition-colors" />
-              </button>
+              </Link>
 
               {/* 2. Ngôn ngữ (Mở Modal chọn ngôn ngữ) */}
               <button

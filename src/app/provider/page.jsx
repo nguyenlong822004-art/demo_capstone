@@ -22,7 +22,6 @@ import {
   MoreVertical,
   ChevronRight,
   QrCode,
-  Volume2,
   Filter,
   Download,
   Share2,
@@ -342,7 +341,6 @@ export default function ProviderOverviewPage() {
               <tr className="border-b border-slate-100 text-[11px] font-bold uppercase text-slate-400 tracking-wider">
                 <th className="py-3 px-3">Tên Điểm đến Di tích</th>
                 <th className="py-3 px-3">Lượt Check-in hôm nay</th>
-                <th className="py-3 px-3">Thuyết minh Audio</th>
                 <th className="py-3 px-3">Đánh giá</th>
                 <th className="py-3 px-3">Trạng thái</th>
                 <th className="py-3 px-3 text-right">Thao tác</th>
@@ -385,15 +383,7 @@ export default function ProviderOverviewPage() {
                     </div>
                   </td>
 
-                  {/* Cột 3: Thuyết minh đa ngôn ngữ */}
-                  <td className="py-3 px-3">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200/70 font-semibold text-[11px]">
-                      <Volume2 size={12} />
-                      <span>{dest.audioLanguages} ngôn ngữ</span>
-                    </span>
-                  </td>
-
-                  {/* Cột 4: Đánh giá sao */}
+                  {/* Cột 3: Đánh giá sao */}
                   <td className="py-3 px-3 font-bold text-slate-800">
                     <span className="text-amber-500">★</span> {dest.rating} / 5.0
                   </td>

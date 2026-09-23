@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Star, Award, Shield, Sparkles, Calendar, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { Star, Award, Shield, Sparkles, Calendar, ChevronRight, Edit3 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { profileInfo as defaultProfile } from "@/data/userProfileMockData";
 
@@ -31,7 +32,7 @@ export default function ProfileOverview({
 
         {/* ── Cụm thông tin tài khoản chính ── */}
         <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-3.5 min-w-0">
             {/* Avatar tròn viền trắng nổi bật */}
             <div className="relative flex-shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -63,6 +64,16 @@ export default function ProfileOverview({
               </p>
             </div>
           </div>
+
+          {/* Nút sửa nhanh hồ sơ chuyển sang /profile/edit */}
+          <Link
+            href="/profile/edit"
+            className="w-9 h-9 rounded-2xl bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white flex items-center justify-center transition-all active:scale-90 shadow-2xs group flex-shrink-0"
+            title="Chỉnh sửa hồ sơ"
+            aria-label="Chỉnh sửa hồ sơ"
+          >
+            <Edit3 size={15} className="group-hover:rotate-12 transition-transform" />
+          </Link>
         </div>
 
         {/* ── Thanh chỉ số 3 cột ngang màu trắng mờ ── */}

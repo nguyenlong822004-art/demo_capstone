@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   MapPin,
   Plus,
@@ -36,6 +37,8 @@ import {
  * Dành cho Content Provider / Ban Quản Lý Điểm Đến
  */
 export default function ProviderDestinationsPage() {
+  const router = useRouter();
+
   // Dữ liệu mẫu (Mock data thuần Việt)
   const initialDestinations = [
     {
@@ -76,9 +79,9 @@ export default function ProviderDestinationsPage() {
         "Lò Bầu cổ là lò gốm thủ công cổ xưa nhất còn sót lại tại làng gốm Bát Tràng. Lò gồm 5 bầu nung liên hoàn sử dụng củi, tái hiện quy trình nung gốm truyền thống có lịch sử hơn 700 năm của cha ông.",
       historyPeriod: "Thế kỷ XIX - Làng gốm 700 năm",
       qrValue: "https://vietculture.vn/checkin?dest=BT-LBC-02",
-      isPaid: false,
-      price: 0,
-      includedServices: [],
+      isPaid: true,
+      price: 30000,
+      includedServices: ["entry"],
     },
     {
       id: "dest-03",
@@ -139,14 +142,31 @@ export default function ProviderDestinationsPage() {
         "Đền thờ Đinh Bộ Lĩnh - vị hoàng đế dẹp loạn 12 sứ quân dựng nên nước Đại Cồ Việt độc lập, tọa lạc giữa thung lũng đá vôi kỳ vĩ của Cố đô Hoa Lư.",
       historyPeriod: "Thế kỷ X - Nhà Đinh",
       qrValue: "https://vietculture.vn/checkin?dest=NB-DTH-05",
-      isPaid: false,
-      price: 0,
-      includedServices: [],
+      isPaid: true,
+      price: 50000,
+      includedServices: ["entry"],
     },
   ];
 
   // State danh sách điểm đến
   const [destinations, setDestinations] = useState(initialDestinations);
+
+  // Đọc dữ liệu đã tạo từ localStorage nếu có
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("vietculture_destinations");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const existingIds = new Set(parsed.map((p) => p.id));
+          const unaddedDefaults = initialDestinations.filter((d) => !existingIds.has(d.id));
+          setDestinations([...parsed, ...unaddedDefaults]);
+        }
+      }
+    } catch (e) {
+      console.error("Lỗi đọc dữ liệu điểm đến:", e);
+    }
+  }, []);
 
   // State bộ lọc và tìm kiếm
   const [searchTerm, setSearchTerm] = useState("");
@@ -175,8 +195,8 @@ export default function ProviderDestinationsPage() {
     image: "/image/vanmieu.png",
     description: "",
     historyPeriod: "",
-    isPaid: false,
-    price: 0,
+    isPaid: true,
+    price: 80000,
     includedServices: ["entry", "guide", "quiz"],
   };
 
@@ -367,7 +387,7 @@ export default function ProviderDestinationsPage() {
 
         <button
           type="button"
-          onClick={handleOpenAddModal}
+          onClick={() => router.push("/provider/destinations/create")}
           className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-sm shadow-emerald-600/25 text-xs sm:text-sm transition-all cursor-pointer self-start sm:self-auto"
         >
           <Plus size={18} strokeWidth={2.4} />
@@ -492,21 +512,15 @@ export default function ProviderDestinationsPage() {
 
                     {/* Cột: Loại hình & Giá vé */}
                     <td className="py-3.5 px-4">
-                      {dest.isPaid ? (
-                        <div>
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
-                            <Ticket size={11} className="text-rose-500" />
-                            <span>{(dest.price || 0).toLocaleString("vi-VN")} đ</span>
-                          </span>
-                          <p className="text-[10px] text-slate-400 mt-0.5 font-medium">
-                            {dest.includedServices?.length || 0} dịch vụ đi kèm
-                          </p>
-                        </div>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          <span>Miễn phí</span>
+                      <div>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                          <Ticket size={11} className="text-rose-500" />
+                          <span>{(dest.price || 50000).toLocaleString("vi-VN")} đ</span>
                         </span>
-                      )}
+                        <p className="text-[10px] text-slate-400 mt-0.5 font-medium">
+                          {dest.includedServices?.length || 1} dịch vụ đi kèm
+                        </p>
+                      </div>
                     </td>
 
                     {/* Cột 4: Tọa độ GPS & Bán kính kích hoạt */}
@@ -837,49 +851,13 @@ export default function ProviderDestinationsPage() {
                   </div>
 
                   {/* Badge trạng thái */}
-                  <span
-                    className={`text-[10.5px] font-bold px-2 py-0.5 rounded-full border ${
-                      formData.isPaid
-                        ? "bg-rose-50 text-rose-700 border-rose-200"
-                        : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                    }`}
-                  >
-                    {formData.isPaid ? "Có thu phí" : "Miễn phí"}
+                  <span className="text-[10.5px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
+                    Bán vé số hóa (Có thu phí)
                   </span>
                 </div>
 
-                {/* Chế độ loại hình vé (Pricing Type Switcher) */}
-                <div className="grid grid-cols-2 gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => handleSetPaidMode(false)}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-2xl border text-xs transition-all cursor-pointer ${
-                      !formData.isPaid
-                        ? "bg-emerald-50 border-emerald-300 text-emerald-700 font-bold shadow-2xs ring-2 ring-emerald-500/20"
-                        : "bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-600 font-medium"
-                    }`}
-                  >
-                    <span className={`w-2.5 h-2.5 rounded-full ${!formData.isPaid ? "bg-emerald-500 ring-2 ring-emerald-200" : "bg-slate-300"}`} />
-                    <span>Miễn phí tham quan</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleSetPaidMode(true)}
-                    className={`flex items-center justify-center gap-2 p-3 rounded-2xl border text-xs transition-all cursor-pointer ${
-                      formData.isPaid
-                        ? "bg-rose-50 border-rose-300 text-rose-700 font-bold shadow-2xs ring-2 ring-rose-500/20"
-                        : "bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-600 font-medium"
-                    }`}
-                  >
-                    <span className={`w-2.5 h-2.5 rounded-full ${formData.isPaid ? "bg-rose-500 ring-2 ring-rose-200" : "bg-slate-300"}`} />
-                    <span>Trải nghiệm có thu phí</span>
-                  </button>
-                </div>
-
-                {/* Các trường nhập liệu chi tiết khi chọn 'Có thu phí' */}
-                {formData.isPaid && (
-                  <div className="p-4 bg-slate-50/70 border border-slate-200 rounded-2xl space-y-4 animate-in fade-in-50 duration-200">
+                {/* Các trường nhập liệu chi tiết vé */}
+                <div className="p-4 bg-slate-50/70 border border-slate-200 rounded-2xl space-y-4 animate-in fade-in-50 duration-200">
                     {/* Giá niêm yết cho khách */}
                     <div>
                       <div className="flex items-center justify-between mb-1">
@@ -979,7 +957,6 @@ export default function ProviderDestinationsPage() {
                       </div>
                     </div>
                   </div>
-                )}
               </div>
 
               {/* Footer Buttons */}

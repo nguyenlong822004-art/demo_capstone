@@ -384,43 +384,55 @@ export default function ProviderLayout({ children }) {
             </div>
 
             <div className="space-y-3 mb-5">
-              <label
-                onClick={() => setCreateType("destination")}
-                className={`w-full p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition-all ${
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => {
+                  setCreateType("destination");
+                  setIsCreateModalOpen(false);
+                  router.push("/provider/destinations/create");
+                }}
+                className={`w-full p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] ${
                   createType === "destination"
-                    ? "border-emerald-500 bg-emerald-50/50 text-emerald-950 font-bold shadow-2xs"
+                    ? "border-emerald-500 bg-emerald-50/70 text-emerald-950 font-bold shadow-xs ring-1 ring-emerald-400/50"
                     : "border-slate-200 bg-slate-50/60 hover:bg-slate-100 text-slate-700"
                 }`}
               >
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 shadow-xs">
                   <MapPin size={20} />
                 </div>
                 <div className="text-left">
-                  <p className="text-xs sm:text-sm font-bold">Thêm Điểm đến di tích</p>
+                  <p className="text-xs sm:text-sm font-bold text-slate-900">Thêm Điểm đến di tích</p>
                   <p className="text-[11px] text-slate-500 font-normal">
                     Khai báo tọa độ GPS, mã QR check-in, ảnh 360° và bài thuyết minh.
                   </p>
                 </div>
-              </label>
+              </div>
 
-              <label
-                onClick={() => setCreateType("route")}
-                className={`w-full p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition-all ${
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => {
+                  setCreateType("route");
+                  setIsCreateModalOpen(false);
+                  router.push("/provider/routes/create");
+                }}
+                className={`w-full p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] ${
                   createType === "route"
-                    ? "border-sky-500 bg-sky-50/50 text-sky-950 font-bold shadow-2xs"
+                    ? "border-sky-500 bg-sky-50/70 text-sky-950 font-bold shadow-xs ring-1 ring-sky-400/50"
                     : "border-slate-200 bg-slate-50/60 hover:bg-slate-100 text-slate-700"
                 }`}
               >
-                <div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center flex-shrink-0 shadow-xs">
                   <Compass size={20} />
                 </div>
                 <div className="text-left">
-                  <p className="text-xs sm:text-sm font-bold">Tạo Lộ trình tham quan di sản</p>
+                  <p className="text-xs sm:text-sm font-bold text-slate-900">Tạo Lộ trình tham quan di sản</p>
                   <p className="text-[11px] text-slate-500 font-normal">
                     Xâu chuỗi các điểm di tích thành tour chuyên đề trải nghiệm văn hóa.
                   </p>
                 </div>
-              </label>
+              </div>
             </div>
 
             <div className="flex items-center gap-2.5">
@@ -436,12 +448,12 @@ export default function ProviderLayout({ children }) {
                 onClick={() => {
                   setIsCreateModalOpen(false);
                   if (createType === "destination") {
-                    router.push("/provider/destinations");
+                    router.push("/provider/destinations/create");
                   } else {
-                    router.push("/provider/routes/builder");
+                    router.push("/provider/routes/create");
                   }
                 }}
-                className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors shadow-sm shadow-emerald-600/20 cursor-pointer"
+                className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-bold transition-colors shadow-sm shadow-emerald-600/20 cursor-pointer"
               >
                 Tiếp tục
               </button>
